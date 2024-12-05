@@ -3,16 +3,19 @@ name: Run tests
 on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup node
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Run tests
       - run: npm ci
+      - run: npm run coverage
       
-      - name: Coveralls GitHub Action
+      - name: Upload coverage to coveralls
         uses: coverallsapp/github-action@v2.3.4
 
-      - run: npm test
