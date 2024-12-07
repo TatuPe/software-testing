@@ -11,3 +11,11 @@ To run tests locally run:<br>
 npm install
 npm test
 ````
+
+To generate coverage reports locally run:<br>
+Please note that coveralls universal reporter needs to be installed: <br>
+https://github.com/coverallsapp/coverage-reporter
+````
+npm run coverage
+coveralls report --repo-token=TOKEN_TO_COVERALLS
+````
