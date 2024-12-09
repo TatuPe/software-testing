@@ -11,12 +11,12 @@ describe('isBoolean', function () {
         expect(isBoolean(false)).to.be.true;
     });
 
-    it('should return false for the boolean object `new Boolean(true)`', function () {
-        expect(isBoolean(new Boolean(true))).to.be.false;
+    it('should return true for the boolean object `new Boolean(true)`', function () {
+        expect(isBoolean(new Boolean(true))).to.be.true;
     });
 
-    it('should return false for the boolean object `new Boolean(false)`', function () {
-        expect(isBoolean(new Boolean(false))).to.be.false;
+    it('should return true for the boolean object `new Boolean(false)`', function () {
+        expect(isBoolean(new Boolean(false))).to.be.true;
     });
 
     it('should return false for `null`', function () {
