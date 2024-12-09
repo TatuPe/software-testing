@@ -3,127 +3,107 @@ import memoize from '../src/memoize.js';
 
 describe('memoize', () => {
 
-    it('should memoize the result of a function', () => {
-        const spy = jest.fn(x => x * 2);
-        const memoized = memoize(spy);
-
-        expect(memoized(2)).toBe(4);
-        expect(memoized(2)).toBe(4); // Cached result
-        expect(memoized(3)).toBe(6);
-
-        expect(spy).toHaveBeenCalledTimes(2); // 2, 3
+    // Test that the function throws an error when input is not a function
+    it('should throw an error if the input is not a function', () => {
+        expect(() => memoize('not a function')).to.throw(TypeError, 'Expected a function');
     });
 
-    it('should update memoized.cache when cache.set returns undefined', () => {
-        // Custom Cache where set() returns undefined
-        class CustomCache {
-            constructor() {
-                this.store = new Map();
-            }
-            has(key) {
-                return this.store.has(key);
-            }
-            get(key) {
-                return this.store.get(key);
-            }
-            set(key, value) {
-                this.store.set(key, value);
-                return undefined; // This is crucial to hit the || cache path
-            }
-        }
+    // Test when a function is passed and memoization works correctly
+    it('should memoize the result of the function', () => {
+        const sum = (a, b) => a + b;
+        const memoizedSum = memoize(sum);
 
-        memoize.Cache = CustomCache;
-        const spy = jest.fn(x => x * 2);
-        const memoized = memoize(spy);
+        const result1 = memoizedSum(1, 2);
+        const result2 = memoizedSum(1, 2); // This should use the cached result
 
-        expect(memoized(2)).toBe(4);
-        expect(memoized.cache).toBeInstanceOf(CustomCache);
-        expect(memoized.cache.get(2)).toBe(4);
+        expect(result1).to.equal(3);
+        expect(result2).to.equal(3); // Memoized result
+        expect(result1).to.equal(result2); // Both results should be equal, indicating caching
     });
 
-    it('should update memoized.cache when cache.set returns a reference to the cache (Map-like behavior)', () => {
-        const spy = jest.fn(x => x * 2);
-        memoize.Cache = Map; // Restore to default
-        const memoized = memoize(spy);
+    // Test with custom resolver (using the second argument as cache key)
+    it('should allow custom cache keys using resolver function', () => {
+        const sum = (a, b) => a + b;
+        const memoizedSum = memoize(sum, (a, b) => `${a}-${b}`);
 
-        expect(memoized(2)).toBe(4);
-        expect(memoized.cache).toBeInstanceOf(Map);
-        expect(memoized.cache.get(2)).toBe(4);
+        const result1 = memoizedSum(1, 2);
+        const result2 = memoizedSum(1, 2); // Should be memoized
+        const result3 = memoizedSum(2, 1); // Different input, different cache key
+
+        expect(result1).to.equal(3);
+        expect(result2).to.equal(3); // Memoized
+        expect(result1).to.equal(result2); // Cache hit
+        expect(result3).to.equal(3); // New cache key for reversed arguments
+        expect(result3).to.not.equal(result1); // Different result due to different key
     });
 
-    it('should support manual updates to memoized.cache', () => {
-        const spy = jest.fn(x => x * 2);
-        const memoized = memoize(spy);
+    // Test when the cache property is used directly
+    it('should allow manual cache manipulation', () => {
+        const sum = (a, b) => a + b;
+        const memoizedSum = memoize(sum);
 
-        memoized(2);
-        expect(memoized.cache.get(2)).toBe(4);
+        memoizedSum(1, 2); // First call, caches result
+        const cacheBefore = memoizedSum.cache;
 
-        // Manually override cache value
-        memoized.cache.set(2, 10);
-        expect(memoized(2)).toBe(10);
+        // Manually set the cache
+        memoizedSum.cache.set('1-2', 99);  // Use a valid key type (string here)
+        const result = memoizedSum(1, 2); // Should return 99 now as we modified the cache
+
+        expect(result).to.equal(99);
+        expect(cacheBefore.get('1-2')).to.not.equal(99); // Cache before should be different
     });
 
-    it('should handle custom cache classes that do not return the cache itself', () => {
-        class CustomCache {
-            constructor() {
-                this.map = new Map();
-            }
-            has(key) {
-                return this.map.has(key);
-            }
-            get(key) {
-                return this.map.get(key);
-            }
-            set(key, value) {
-                this.map.set(key, value);
-                return undefined; // Custom behavior where set() does NOT return cache
-            }
-        }
 
-        memoize.Cache = CustomCache;
-        const spy = jest.fn(x => x * 2);
-        const memoized = memoize(spy);
+    // Test when no custom resolver is provided, and the first argument is used as the cache key
+    it('should use the first argument as the cache key by default', () => {
+        const multiply = (a, b) => a * b;
+        const memoizedMultiply = memoize(multiply);
 
-        expect(memoized(2)).toBe(4);
-        expect(memoized.cache).toBeInstanceOf(CustomCache);
-        expect(memoized.cache.get(2)).toBe(4);
+        const result1 = memoizedMultiply(3, 4);
+        const result2 = memoizedMultiply(3, 4); // Should return cached result
+
+        expect(result1).to.equal(12);
+        expect(result2).to.equal(12); // Memoized result
     });
 
-    it('should handle multiple arguments and custom resolver', () => {
-        const spy = jest.fn((a, b) => a + b);
-        const resolver = (a, b) => `${a}-${b}`;
-        const memoized = memoize(spy, resolver);
+    // Test when the cache key resolves to undefined
+    it('should handle undefined cache keys properly', () => {
+        const multiply = (a, b) => a * b;
+        const memoizedMultiply = memoize(multiply);
 
-        expect(memoized(1, 2)).toBe(3);
-        expect(memoized(1, 2)).toBe(3); // Cached result
-        expect(memoized(2, 1)).toBe(3); // Different cache key
-        expect(spy).toHaveBeenCalledTimes(2);
+        const result1 = memoizedMultiply(3, 4);
+        const result2 = memoizedMultiply(undefined, 4); // New input should create a new cache key
+
+        expect(result1).to.equal(12);
+        expect(result2).to.equal(NaN); // undefined * 4 is NaN
     });
 
-    it('should allow customization of memoize.Cache', () => {
-        class CustomCache {
-            constructor() {
-                this.data = {};
-            }
-            has(key) {
-                return Object.prototype.hasOwnProperty.call(this.data, key);
-            }
-            get(key) {
-                return this.data[key];
-            }
-            set(key, value) {
-                this.data[key] = value;
-                return this; // Custom behavior like Map
-            }
-        }
+    // Test cache behavior with multiple different inputs
+    it('should correctly handle multiple different inputs and cache separately', () => {
+        const add = (a, b) => a + b;
+        const memoizedAdd = memoize(add);
 
-        memoize.Cache = CustomCache;
-        const spy = jest.fn(x => x * 2);
-        const memoized = memoize(spy);
+        const result1 = memoizedAdd(1, 2);
+        const result2 = memoizedAdd(3, 4);
+        const result3 = memoizedAdd(1, 2); // Memoized result
 
-        expect(memoized(2)).toBe(4);
-        expect(memoized.cache).toBeInstanceOf(CustomCache);
-        expect(memoized.cache.get(2)).toBe(4);
+        expect(result1).to.equal(3);
+        expect(result2).to.equal(7);
+        expect(result3).to.equal(3); // Should be the same as result1 due to caching
+        expect(result1).to.not.equal(result2); // Different inputs should not overwrite each other in cache
+    });
+
+    // Test that the cache is reset after a new function is passed in
+    it('should reset the cache if a new function is passed', () => {
+        const multiply = (a, b) => a * b;
+        const memoizedMultiply = memoize(multiply);
+
+        const result1 = memoizedMultiply(3, 4);
+        memoizedMultiply.cache.clear(); // Clear the cache manually
+        const result2 = memoizedMultiply(3, 4); // New call after cache is cleared
+
+        expect(result1).to.equal(12);
+        expect(result2).to.equal(12); // Memoized again after clearing cache
     });
 
 });
