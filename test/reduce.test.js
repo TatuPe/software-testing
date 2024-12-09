@@ -1,85 +1,66 @@
 import { expect } from 'chai';
 import reduce from '../src/reduce.js';
 
-describe('reduce function tests', () => {
+describe('reduce', () => {
 
-    describe('Calculating Total Price in Shopping Cart', () => {
-        it('should calculate the total price of items in the cart', () => {
-            const cart = [
-                { price: 100, quantity: 2 },
-                { price: 50, quantity: 1 },
-                { price: 200, quantity: 3 }
-            ];
-
-            const totalPrice = reduce(cart, (total, item) => total + item.price * item.quantity, 0);
-
-            expect(totalPrice).to.equal(950);
-        });
+    it('should reduce an array to a single value using an accumulator', () => {
+        const result = reduce([1, 2, 3], (sum, n) => sum + n, 0);
+        expect(result).to.equal(6); // sum of 1 + 2 + 3
     });
 
-    describe('Grouping Products by Category', () => {
-        it('should group products by category', () => {
-            const products = [
-                { name: 'Shirt', category: 'Clothing' },
-                { name: 'Shoes', category: 'Footwear' },
-                { name: 'Jeans', category: 'Clothing' },
-                { name: 'Hat', category: 'Accessories' }
-            ];
-
-            const groupedProducts = reduce(products, (acc, product) => {
-                if (!acc[product.category]) {
-                    acc[product.category] = [];
-                }
-                acc[product.category].push(product);
-                return acc;
-            }, {});
-
-            expect(groupedProducts).to.deep.equal({
-                Clothing: [
-                    { name: 'Shirt', category: 'Clothing' },
-                    { name: 'Jeans', category: 'Clothing' }
-                ],
-                Footwear: [
-                    { name: 'Shoes', category: 'Footwear' }
-                ],
-                Accessories: [
-                    { name: 'Hat', category: 'Accessories' }
-                ]
-            });
-        });
+    it('should return the initial accumulator if collection is empty', () => {
+        const result = reduce([], (sum, n) => sum + n, 0);
+        expect(result).to.equal(0); // No elements, so accumulator remains 0
     });
 
-    describe('Applying Discounts to Shopping Cart', () => {
-        it('should calculate the total discount for all items in the cart', () => {
-            const cart = [
-                { price: 100, discount: 0.1 },
-                { price: 50, discount: 0.2 },
-                { price: 200, discount: 0.05 }
-            ];
-
-            const totalDiscount = reduce(cart, (total, item) => total + (item.price * item.discount), 0);
-
-            expect(totalDiscount).to.equal(45);
-        });
+    it('should reduce an object to a single value using an accumulator', () => {
+        const result = reduce(
+            { 'a': 1, 'b': 2, 'c': 1 },
+            (result, value, key) => {
+                (result[value] || (result[value] = [])).push(key);
+                return result;
+            },
+            {}
+        );
+        expect(result).to.deep.equal({ '1': ['a', 'c'], '2': ['b'] });
     });
 
-    describe('Counting Product Popularity', () => {
-        it('should track how many times each product is ordered', () => {
-            const orders = [
-                { productId: 1 },
-                { productId: 2 },
-                { productId: 1 },
-                { productId: 3 },
-                { productId: 1 }
-            ];
+    it('should return the first element of the array if no accumulator is provided', () => {
+        const result = reduce([5, 6, 7], (sum, n) => sum + n);
+        expect(result).to.equal(18); // Accumulator starts with 5, then 5 + 6 + 7
+    });
 
-            const productCounts = reduce(orders, (counts, order) => {
-                counts[order.productId] = (counts[order.productId] || 0) + 1;
-                return counts;
-            }, {});
+    it('should work with an empty object', () => {
+        const result = reduce({}, (sum, n) => sum + n, 0);
+        expect(result).to.equal(0); // Empty object should return 0
+    });
 
-            expect(productCounts).to.deep.equal({ '1': 3, '2': 1, '3': 1 });
-        });
+    it('should accumulate object values correctly without an initial accumulator', () => {
+        const result = reduce(
+            { 'a': 1, 'b': 2 },
+            (sum, value) => sum + value
+        );
+        expect(result).to.equal(3); // 1 + 2
+    });
+
+    it('should handle objects with non-numeric values correctly', () => {
+        const result = reduce(
+            { 'a': 'apple', 'b': 'banana' },
+            (concat, value) => concat + value,
+            ''
+        );
+        expect(result).to.equal('applebanana'); // Concatenate the values 'apple' and 'banana'
+    });
+
+    it('should call the iteratee for each element in the collection', () => {
+        let count = 0;
+        reduce([1, 2, 3], () => { count++; }, 0);
+        expect(count).to.equal(3); // The iteratee should be called 3 times for the 3 elements
+    });
+
+    it('should correctly reduce an array of strings', () => {
+        const result = reduce(['a', 'b', 'c'], (concat, str) => concat + str, '');
+        expect(result).to.equal('abc'); // Concatenate the strings 'a', 'b', and 'c'
     });
 
 });

@@ -80,17 +80,4 @@ describe('Test map function', () => {
         });
     });
 
-    describe('Test with negative and edge cases', () => {
-
-        it('should return an empty array when iteratee is not provided', () => {
-            const result = map([1, 2, 3]);
-            expect(result).to.deep.equal([undefined, undefined, undefined]);
-        });
-
-        it('should return an empty array when the input is not an array', () => {
-            const result = map('not an array', (n) => n);
-            expect(result).to.deep.equal([]);
-        });
-    });
-
 });

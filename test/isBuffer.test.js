@@ -5,8 +5,7 @@ describe('isBuffer', function () {
 
     // Test for valid buffer
     it('should return true for a Buffer', function () {
-        const buffer = Buffer.from([1, 2, 3]);
-        expect(isBuffer(buffer)).to.be.true;
+        expect(isBuffer(new Buffer(2))).to.be.true;
     });
 
     // Test for non-buffer values

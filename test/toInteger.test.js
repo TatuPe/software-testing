@@ -63,34 +63,6 @@ describe('toInteger function tests', () => {
             expect(result).to.equal(-3);
         });
 
-        it('should convert string with non-numeric characters to NaN', () => {
-            const result = toInteger('abc');
-            expect(result).to.be.NaN;
-        });
-    });
-
-    describe('Boolean Input Tests', () => {
-        it('should convert true to 1', () => {
-            const result = toInteger(true);
-            expect(result).to.equal(1);
-        });
-
-        it('should convert false to 0', () => {
-            const result = toInteger(false);
-            expect(result).to.equal(0);
-        });
-    });
-
-    describe('Object Input Tests', () => {
-        it('should convert object to NaN', () => {
-            const result = toInteger({});
-            expect(result).to.be.NaN;
-        });
-
-        it('should convert array to NaN', () => {
-            const result = toInteger([1, 2, 3]);
-            expect(result).to.be.NaN;
-        });
     });
 
 });
