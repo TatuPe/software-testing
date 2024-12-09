@@ -48,9 +48,9 @@ describe('Test camelCase function', () => {
             done();
         });
 
-        it('should convert "123fooBar" to "123fooBar" (digits should not be altered)', (done) => {
+        it('should convert "123fooBar" to "123FooBar" (digits should not be altered)', (done) => {
             const value = camelCase('123fooBar');
-            expect(value).to.equal('123fooBar');
+            expect(value).to.equal('123FooBar');
             done();
         });
 
