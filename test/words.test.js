@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import words from '../src/words.js';
 
 
-describe('Test words function.', () => {
+describe('words', () => {
     describe('Test with only words.', () => {
         it('it should return an array of words.', (done) => {
             var value = words('fred, barney, & pebbles');

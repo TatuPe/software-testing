@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import capitalize from '../src/capitalize.js';
 
 
-describe('Test capitalize function.', () => {
+describe('capitalize', () => {
     describe('Test with null value.', () => {
         //TODO: Document feature
         it('it returns Null. (undocumented!)', (done) => {

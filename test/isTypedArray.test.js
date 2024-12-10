@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import isTypedArray from '../src/isTypedArray.js';
 
-describe('Test isTypedArray function.', () => {
+describe('isTypedArray', () => {
 
     // Test with valid typed arrays
     describe('Test with valid typed arrays.', () => {

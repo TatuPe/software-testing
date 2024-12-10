@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import toString from '../src/toString.js';
 
-describe('Test toString function.', () => {
+describe('toString', () => {
     describe('Test with null value.', () => {
         it('it should return empty string.', (done) => {
             var value = toString(null);
@@ -18,7 +18,7 @@ describe('Test toString function.', () => {
     });
     describe('Test with array.', () => {
         it('it should return a string.', (done) => {
-            var value = toString([1,2,3]);
+            var value = toString([1, 2, 3]);
             expect(value).to.equal('1,2,3');
             done();
         });

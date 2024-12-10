@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import toNumber from '../src/toNumber.js';
 
-describe('Test toNumber function.', () => {
+describe('toNumber', () => {
 
     // Test with null value
     describe('Test with null value.', () => {

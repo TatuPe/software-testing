@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import defaultToAny from '../src/defaultToAny.js';
 
 
-describe('Test defaultToAny function.', () => {
+describe('defaultToAny', () => {
     describe('Test with all null values.', () => {
         it('it should return NaN.', (done) => {
             var value = defaultToAny(undefined, null, NaN);

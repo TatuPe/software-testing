@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import isEmpty from '../src/isEmpty.js';
 
 
-describe('Test isEmpty function.', () => {
+describe('isEmpty', () => {
     describe('Test with null value.', () => {
         it('it should return true.', (done) => {
             var value = isEmpty(null);
@@ -54,7 +54,7 @@ describe('Test isEmpty function.', () => {
     });
     describe('Test with object.', () => {
         it('it should return false.', (done) => {
-            var value = isEmpty({a: 1});
+            var value = isEmpty({ a: 1 });
             expect(value).to.equal(false);
             done();
         });

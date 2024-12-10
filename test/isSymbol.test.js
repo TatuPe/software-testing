@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import isSymbol from '../src/isSymbol.js';
 
-describe('isSymbol function tests', () => {
+describe('isSymbol', () => {
 
     describe('Symbol Primitive Tests', () => {
         it('should return true for Symbol.iterator', () => {

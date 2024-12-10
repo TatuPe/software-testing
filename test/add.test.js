@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import add from '../src/add.js';
 
 
-describe('Test add function.', () => {
+describe('add', () => {
     describe('Test with numeric values.', () => {
         it('it should return a number.', (done) => {
             var value = add(2, 2);

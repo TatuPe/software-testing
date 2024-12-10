@@ -6,7 +6,7 @@ function Foo() {
     this.b = 2
 }
 
-describe('Test keys function.', () => {
+describe('keys', () => {
     describe('Test with function.', () => {
         it('it should return a and b in an array.', (done) => {
             var value = keys(new Foo);
